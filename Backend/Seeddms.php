@@ -51,6 +51,30 @@ class Document_Backend_Seeddms
     }
 
     /**
+     * Create a new folder
+     *
+     * @param integer $parent id of parent folder
+     * @param string $id unique id used for attribute 'sopenid'
+     * @param string $name optional name. If not passed $id is used
+     */
+    function getCreateFolder($parentid, $id, $name='') {
+        if(!$name)
+           $name = $id;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+        curl_setopt($ch, CURLOPT_COOKIEFILE, $this->_cookiefile);
+        curl_setopt($ch, CURLOPT_URL,$this->_url."/restapi/index.php/folder/".$parentid."/createfolder");
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "name=".$name."&comment=&attributes[sopenid]=".$id);
+
+        $buf2 = curl_exec ($ch);
+        curl_close ($ch);
+
+        $data = json_decode($buf2);
+        return $data;
+    }
+
+    /**
      * Get folder by attribute value of sopen attribute
      */
     function getFolderByAttr($id) {
