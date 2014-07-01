@@ -33,8 +33,30 @@ class Document_Backend_Seeddms
         $this->_url = $url;
     }
 
+    /**
+     * Singleton instance of Document_Backend_Seeddms.
+     *
+     * @var Document_Backend_Seeddms
+     */
+    protected static $instance = null;
+
+    /**
+     * Singleton pattern to get an Document_Backend_Seeddms instance.
+     *
+     * @return Document_Backend_Seeddms
+     */
+    public static function getInstance() {
+        if (self::$instance === null) {
+            $config = \Tinebase_Config::getInstance()->getConfig('seeddms', NULL, TRUE)->value;
+
+            self::$instance = new self($config['url']);
+        }
+
+        return self::$instance;
+    }
+
     function login($user, $pass) {
-        
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_COOKIEJAR, $this->_cookiefile);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
@@ -53,13 +75,15 @@ class Document_Backend_Seeddms
     /**
      * Create a new folder
      *
-     * @param integer $parent id of parent folder
+     * @param integer $parentid of parent folder
      * @param string $id unique id used for attribute 'sopenid'
      * @param string $name optional name. If not passed $id is used
      */
     function getCreateFolder($parentid, $id, $name='') {
-        if(!$name)
-           $name = $id;
+        if (!$name) {
+            $name = $id;
+        }
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
         curl_setopt($ch, CURLOPT_COOKIEFILE, $this->_cookiefile);
