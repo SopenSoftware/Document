@@ -50,6 +50,7 @@ class Document_Backend_Seeddms
             $config = \Tinebase_Config::getInstance()->getConfig('seeddms', NULL, TRUE)->value;
 
             self::$instance = new self($config['url']);
+            self::$instance->login($config['user'], $config['pass']);
         }
 
         return self::$instance;

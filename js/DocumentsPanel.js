@@ -193,6 +193,11 @@ Tine.Document.DocumentsTabPanel = Ext.extend(Ext.Panel, {
     record_model: null,
 
     /**
+     * The full record
+     */
+    record: null,
+
+    /**
      * other config options
      */
 	title: null,
@@ -204,6 +209,8 @@ Tine.Document.DocumentsTabPanel = Ext.extend(Ext.Panel, {
     	// @todo add context menu ?
     	// @todo add buttons ?
     	// @todo add more renderers ?
+
+        var self = this;
 
         // the columnmodel
         var columnModel = new Ext.grid.ColumnModel([
@@ -231,12 +238,58 @@ Tine.Document.DocumentsTabPanel = Ext.extend(Ext.Panel, {
             emptyMsg: this.translation._("No history to display")
         });
 
+        var addFolder = new Ext.Button({
+          scale: 'small',
+          text: 'Ordner anlegen',
+          iconCls: 'icon-addFolder',
+          disabled: false,
+          handler: function() {
+            Ext.Ajax.request({
+              url: 'index.php',
+              success: function(res) {
+                addFolder.setDisabled(true);
+                Ext.Msg.show({
+                  title:'Ordner angelegt',
+                  msg: 'Der Ordner "' + self.record.data.name + '" wurde erfolgreich angelegt.',
+                  buttons: Ext.Msg.OK,
+                  icon: Ext.MessageBox.INFO
+                });
+              },
+              params: {
+                parentId: '3',
+                id: self.record.data.id,
+                name: self.record.data.name,
+                method: 'Document.createFolder'
+              }
+            });
+          }
+        });
+
+        Ext.Ajax.request({
+          url: 'index.php',
+          success: function(response) {
+            var obj = Ext.decode(response.responseText);
+
+            if (obj.data.length > 0) {
+              addFolder.setDisabled(true);
+            }
+          },
+          params: {
+            sopenid: self.record.data.id,
+            method: 'Document.getFolderBySopenId'
+          }
+        });
+
         // the gridpanel
         var gridPanel = new Ext.grid.GridPanel({
             id: this.app + 'Documents_Grid',
             store: this.store,
             cm: columnModel,
-            tbar: false, //pagingToolbar,
+            tbar: {
+              items: [
+                addFolder
+              ]
+            },
             selModel: rowSelectionModel,
             border: false,
             autoExpandColumn: 'comment',
@@ -307,16 +360,7 @@ Tine.Document.DocumentsTabPanel = Ext.extend(Ext.Panel, {
         // add new documents from documents store
         this.store.on('load', function(store, operation) {
         	documentsStore = Ext.StoreMgr.lookup('DocumentsStore');
-            /*
-        	documentsStore.each(function(note){
-        		if (!note.data.creation_time) {
-                    store.insert(0, note);
-        		}
-            });
-            */
         }, this);
-
-        //this.store.load({});
     },
 
     /**
@@ -455,7 +499,6 @@ Tine.Document.getDownloadLink = function(id, metadata, record) {
  */
 Tine.Document.getPreviewImage = function(id, metadata, record) {
 // record.data.version has the version of the document
-console.log(record);
     return '<img src="index.php?method=Document.preview&docid=' + record.id + '" ext:qtip="' + id + '"/>';
 };
 
