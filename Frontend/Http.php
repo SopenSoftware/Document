@@ -10,7 +10,7 @@
 class Document_Frontend_Http extends Tinebase_Frontend_Http_Abstract
 {
     protected $_applicationName = 'Document';
-    
+
     /**
      * Returns all JS files which must be included for this app
      *
@@ -20,10 +20,11 @@ class Document_Frontend_Http extends Tinebase_Frontend_Http_Abstract
     {
         return array(
           'Document/js/Models.js',
-          'Document/js/Backend.js'
+          'Document/js/Backend.js',
+          'Document/js/DocumentsPanel.js'
         );
     }
-    
+
     public function getCssFilesToInclude()
     {
         return array(
