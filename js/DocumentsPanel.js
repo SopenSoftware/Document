@@ -202,6 +202,7 @@ Tine.Document.DocumentsTabPanel = Ext.extend(Ext.Panel, {
      */
 	title: null,
 	layout: 'fit',
+    parentId: null,
 
     getDocumentsGrid: function()
     {
@@ -366,7 +367,11 @@ Tine.Document.DocumentsTabPanel = Ext.extend(Ext.Panel, {
     /**
      * @private
      */
-    initComponent: function(){
+    initComponent: function() {
+
+      if (!this.parentId) {
+        console.warn('Document: parentId is missing!');
+      }
 
     	// get translations
     	this.translation = new Locale.Gettext();

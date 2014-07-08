@@ -72,4 +72,24 @@ class Document_Frontend_Json extends Tinebase_Frontend_Json_Abstract{
         return $result;
     }
 
+    /**
+     * Returns settings for document app
+     *
+     * @return  array record data
+     *
+     * @todo    return json store style with totalcount/result?
+     */
+    public function getSettings()
+    {
+        $result = Document_Controller::getInstance()->getSettings()->toArray();
+
+        return $result;
+    }
+
+    public function saveSettings($recordData) {
+        $settings = new Document_Model_Config($recordData);
+        $result = Document_Controller::getInstance()->saveSettings($settings)->toArray();
+
+        return $result;
+    }
 }

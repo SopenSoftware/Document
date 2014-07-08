@@ -21,7 +21,8 @@ class Document_Frontend_Http extends Tinebase_Frontend_Http_Abstract
         return array(
           'Document/js/Models.js',
           'Document/js/Backend.js',
-          'Document/js/DocumentsPanel.js'
+          'Document/js/DocumentsPanel.js',
+          'Document/js/AdminPanel.js'
         );
     }
 
