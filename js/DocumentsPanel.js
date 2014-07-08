@@ -183,9 +183,9 @@ Tine.Document.DocumentsTabPanel = Ext.extend(Ext.Panel, {
     },
 
     /**
-     * the record id
+     * the parent id
      */
-    record_id: null,
+    parent_id: null,
 
     /**
      * the record model
@@ -202,7 +202,6 @@ Tine.Document.DocumentsTabPanel = Ext.extend(Ext.Panel, {
      */
 	title: null,
 	layout: 'fit',
-    parentId: null,
 
     getDocumentsGrid: function()
     {
@@ -239,6 +238,12 @@ Tine.Document.DocumentsTabPanel = Ext.extend(Ext.Panel, {
             emptyMsg: this.translation._("No history to display")
         });
 
+        var folderName = self.record.data.name;
+
+        if (self.record_model === 'Addressbook_Model_Contact') {
+          folderName = self.record.data.n_fn;
+        }
+
         var addFolder = new Ext.Button({
           scale: 'small',
           text: 'Ordner anlegen',
@@ -251,15 +256,15 @@ Tine.Document.DocumentsTabPanel = Ext.extend(Ext.Panel, {
                 addFolder.setDisabled(true);
                 Ext.Msg.show({
                   title:'Ordner angelegt',
-                  msg: 'Der Ordner "' + self.record.data.name + '" wurde erfolgreich angelegt.',
+                  msg: 'Der Ordner "' + folderName + '" wurde erfolgreich angelegt.',
                   buttons: Ext.Msg.OK,
                   icon: Ext.MessageBox.INFO
                 });
               },
               params: {
-                parentId: '3',
+                parentId: self.parent_id,
                 id: self.record.data.id,
-                name: self.record.data.name,
+                name: folderName,
                 method: 'Document.createFolder'
               }
             });
@@ -350,7 +355,7 @@ Tine.Document.DocumentsTabPanel = Ext.extend(Ext.Panel, {
             var filter = filterToolbar ? filterToolbar.getValue() : [];
             filter.push(
                 {field: 'record_model', operator: 'equals', value: this.record_model },
-                {field: 'record_id', operator: 'equals', value: (this.record_id) ? this.record_id : 0 },
+                {field: 'record_id', operator: 'equals', value: (this.record) ? this.record.id : 0 },
                 {field: 'record_backend', operator: 'equals', value: 'Sql' }
             );
 
@@ -368,43 +373,42 @@ Tine.Document.DocumentsTabPanel = Ext.extend(Ext.Panel, {
      * @private
      */
     initComponent: function() {
-
-      if (!this.parentId) {
-        console.warn('Document: parentId is missing!');
+      if (!this.parent_id) {
+        console.warn('Document: parent_id is missing!');
       }
 
-    	// get translations
-    	this.translation = new Locale.Gettext();
-        this.translation.textdomain('Tinebase');
+      // get translations
+      this.translation = new Locale.Gettext();
+      this.translation.textdomain('Tinebase');
 
-        // translate / update title
-        this.title = this.translation._('Dokumente');
+      // translate / update title
+      this.title = this.translation._('Dokumente');
 
-    	// get store
-        this.initStore();
+      // get store
+      this.initStore();
 
-        // get grid
-        this.activitiesGrid = this.getDocumentsGrid();
+      // get grid
+      this.activitiesGrid = this.getDocumentsGrid();
 
-        this.items = [
-            new Ext.Panel({
-                layout: 'border',
-                items: [{
-                    region: 'center',
-                    xtype: 'panel',
-                    layout: 'fit',
-                    border: false,
-                    items: this.activitiesGrid
-                }]
-            })
-        ];
+      this.items = [
+        new Ext.Panel({
+          layout: 'border',
+          items: [{
+            region: 'center',
+            xtype: 'panel',
+            layout: 'fit',
+            border: false,
+            items: this.activitiesGrid
+          }]
+        })
+      ];
 
-        // load store on activate
-        this.on('activate', function(panel){
-            panel.store.load({});
-        });
+      // load store on activate
+      this.on('activate', function(panel){
+        panel.store.load({});
+      });
 
-        Tine.Document.DocumentsTabPanel.superclass.initComponent.call(this);
+      Tine.Document.DocumentsTabPanel.superclass.initComponent.call(this);
     }
 });
 
