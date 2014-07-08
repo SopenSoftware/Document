@@ -103,42 +103,33 @@ Tine.Document.DocumentsPanel = Ext.extend(Ext.Panel, {
         });
     },
 
-    /**
-     * @private
-     */
-    initComponent: function(){
+  /**
+   * @private
+   */
+  initComponent: function(){
+    // get translations
+    this.translation = new Locale.Gettext();
+    this.translation.textdomain('Tinebase');
 
-        // get translations
-        this.translation = new Locale.Gettext();
-        this.translation.textdomain('Tinebase');
+    // translate / update title
+    this.title = this.translation._('Dokumente');
 
-        // translate / update title
-        this.title = this.translation._('Dokumente');
+    // init recordDocumentsStore
+    this.documents = [];
+    this.recordDocumentsStore = new Ext.data.JsonStore({
+        id: 'id',
+        fields: Tine.Document.Model.Document,
+        data: this.documents,
+        sortInfo: {
+            field: 'creation_date',
+            direction: 'DESC'
+        }
+    });
 
-        // init recordDocumentsStore
-        this.documents = [];
-        this.recordDocumentsStore = new Ext.data.JsonStore({
-            id: 'id',
-            fields: Tine.Document.Model.Document,
-            data: this.documents,
-            sortInfo: {
-            	field: 'creation_date',
-            	direction: 'DESC'
-            }
-        });
+    Ext.StoreMgr.add('DocumentsStore', this.recordDocumentsStore);
 
-        Ext.StoreMgr.add('DocumentsStore', this.recordDocumentsStore);
-
-        // set data view with activities
-        this.items = [
-//            new Tine.widgets.activities.DocumentsFormField({
- //               recordDocumentsStore: this.recordDocumentsStore
-  //          }),
-   //         this.activities
-        ];
-
-        Tine.widgets.activities.DocumentsPanel.superclass.initComponent.call(this);
-    }
+    Tine.widgets.activities.DocumentsPanel.superclass.initComponent.call(this);
+  }
 });
 
 /************************* tab panel *********************************/
@@ -242,6 +233,10 @@ Tine.Document.DocumentsTabPanel = Ext.extend(Ext.Panel, {
 
         if (self.record_model === 'Addressbook_Model_Contact') {
           folderName = self.record.data.n_fn;
+        }
+
+        if (self.record_model === 'Membership_Model_SoMember') {
+          folderName = self.record.data.member_nr;
         }
 
         var addFolder = new Ext.Button({
