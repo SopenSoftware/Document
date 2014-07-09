@@ -8,7 +8,8 @@ Die Konfiguration mit den Zugangsdaten zu SeedDMS befinden sich in der Datei con
   'seeddms' => array(
     'url' => 'http://localhost/seeddms',
     'user' => 'admin',
-    'pass' => 'secret'
+    'pass' => 'secret',
+    'parentFolder' => 4711
   ),
 ```
 
