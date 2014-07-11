@@ -148,13 +148,18 @@ class Document_Backend_Seeddms
         return $data;
     }
 
-    function uploadDocument($parentid, $filename, $name) {
+    function uploadDocument($parentid, $filename, $name, $isBlob) {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
         curl_setopt($ch, CURLOPT_COOKIEFILE, $this->_cookiefile);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents($filename));
-        curl_setopt($ch, CURLOPT_URL,$this->_url."/restapi/index.php/folder/".$parentid."/document?name=".$name."&origfilename=".basename($filename));
+
+        if ($isBlob) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $filename);
+        } else {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents($filename));
+        }
+        curl_setopt($ch, CURLOPT_URL,$this->_url."/restapi/index.php/folder/".$parentid."/document?name=".$name."&origfilename=".$name);
 
         $buf2 = curl_exec ($ch);
         curl_close ($ch);

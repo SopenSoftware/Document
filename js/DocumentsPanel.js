@@ -323,9 +323,35 @@ Tine.Document.DocumentsTabPanel = Ext.extend(Ext.Panel, {
     },
 
     onFileDrop: function(event) {
+      var self = this;
+
       // Prevent file to be opened in the browser window.
       event.preventDefault();
-      console.log(event);
+
+      for (var i = 0; i < event.browserEvent.dataTransfer.files.length; ++i) {
+        var f = event.browserEvent.dataTransfer.files[i];
+        var reader = new FileReader();
+
+        // Closure to capture the file information.
+        reader.onload = function(e) {
+          Ext.Ajax.request({
+            url: 'index.php',
+            success: function(response) {
+            },
+            params: {
+              parentid: self.parent_id,
+              blob: e.target.result,
+              name: f.name,
+              method: 'Document.getUpload'
+            }
+          });
+        };
+
+        // Read in the image file as a data URL.
+        reader.readAsBinaryString(f);
+      };
+
+      return false;
     },
 
     onDragLeave: function(event, el) {
