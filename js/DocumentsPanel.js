@@ -319,14 +319,30 @@ Tine.Document.DocumentsTabPanel = Ext.extend(Ext.Panel, {
     onDragOver: function(event, el) {
       event.stopPropagation();
       event.preventDefault();
+
+      if (!el.classList.contains('x-grid3-scroller')) {
+        return false;
+      }
+
       el.style.backgroundColor = '#FFFFDB';
     },
 
-    onFileDrop: function(event) {
-      var self = this;
+    onDragLeave: function(event, el) {
+      if (!el.classList.contains('x-grid3-scroller')) {
+        return false;
+      }
 
+      el.style.backgroundColor = '#FFFFFF';
+    },
+
+    onFileDrop: function(event, el) {
+      var self = this;
+      el.style.backgroundColor = '#FFFFFF';
+      
       // Prevent file to be opened in the browser window.
       event.preventDefault();
+
+      this.activitiesGrid.getEl().mask('Dateien werden hochgeladen...', 'x-mask-loading');
 
       for (var i = 0; i < event.browserEvent.dataTransfer.files.length; ++i) {
         var f = event.browserEvent.dataTransfer.files[i];
@@ -336,7 +352,8 @@ Tine.Document.DocumentsTabPanel = Ext.extend(Ext.Panel, {
         reader.onload = function(e) {
           Ext.Ajax.request({
             url: 'index.php',
-            success: function(response) {
+            callback: function(response) {
+              self.activitiesGrid.getEl().unmask();
             },
             params: {
               parentid: self.parent_id,
@@ -352,10 +369,6 @@ Tine.Document.DocumentsTabPanel = Ext.extend(Ext.Panel, {
       };
 
       return false;
-    },
-
-    onDragLeave: function(event, el) {
-      el.style.backgroundColor = '#FFFFFF';
     },
 
     /**
