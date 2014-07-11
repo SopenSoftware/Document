@@ -317,14 +317,14 @@ Tine.Document.DocumentsTabPanel = Ext.extend(Ext.Panel, {
     },
 
     onDragOver: function(event, el) {
+      event.stopPropagation();
       event.preventDefault();
       el.style.backgroundColor = '#FFFFDB';
     },
 
     onFileDrop: function(event) {
       // Prevent file to be opened in the browser window.
-      event.stopPropagation();
-      event.stopEvent();
+      event.preventDefault();
       console.log(event);
     },
 
