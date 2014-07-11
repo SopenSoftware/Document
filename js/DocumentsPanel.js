@@ -305,7 +305,31 @@ Tine.Document.DocumentsTabPanel = Ext.extend(Ext.Panel, {
             })
         });
 
+        gridPanel.on('afterrender', function() {
+          var el = this.getEl();
+
+          el.on('dragover', this.onDragOver, this);
+          el.on('dragleave', this.onDragLeave, this);
+          el.on('drop', this.onFileDrop, this);
+        }, this);
+
         return gridPanel;
+    },
+
+    onDragOver: function(event, el) {
+      event.preventDefault();
+      el.style.backgroundColor = '#FFFFDB';
+    },
+
+    onFileDrop: function(event) {
+      // Prevent file to be opened in the browser window.
+      event.stopPropagation();
+      event.stopEvent();
+      console.log(event);
+    },
+
+    onDragLeave: function(event, el) {
+      el.style.backgroundColor = '#FFFFFF';
     },
 
     /**
