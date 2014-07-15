@@ -356,7 +356,7 @@ Tine.Document.DocumentsTabPanel = Ext.extend(Ext.Panel, {
               self.activitiesGrid.getEl().unmask();
             },
             params: {
-              parentid: self.parent_id,
+              parentid: self.record.id,
               blob: e.target.result,
               name: f.name,
               method: 'Document.getUpload'

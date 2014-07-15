@@ -95,6 +95,7 @@ class Document_Frontend_Json extends Tinebase_Frontend_Json_Abstract{
 
     public function getUpload($parentid, $blob, $name) {
         $seeddms = Document_Backend_Seeddms::getInstance();
-        return $seeddms->uploadDocument($parentid, $blob, $name, true);
+        $folder = $this->getFolderBySopenId($parentid);
+        return $seeddms->uploadDocument($folder->data[0]->id, $blob, $name, true);
     }
 }
